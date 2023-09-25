@@ -1,0 +1,48 @@
+<table>
+  <tr>
+      <th>Brand</th>
+      <th>Stock</th>
+      <th>Cost</th>
+      <th>Quantity</th>
+      <th>No of Days</th>
+  </tr>
+  <tr *ngFor="let cycle of cycles">
+      <td>{{cycle.brand}}</td>
+      <td>{{cycle.stock - cycle.numBorrowed}}</td>
+      <td>{{cycle.cost}}</td>
+      <td><input type="text" name="borrownumber" #Number></td>
+      <td> <input type="text" name ="days" #Days></td>
+      <td>
+          <form method="post"> 
+             
+              <input type="button" value="borrow" (click)="onBorrow(cycle.id,Number.value)">
+              <input type="button" value="restock" (click)="onRestock(cycle.id,Number.value)">
+              <input type="button" value="return" (click)="onReturn(cycle.id,Number.value)">
+              <button (click)="openCart(cycle.id,Number.value,Days.value)">Add To Cart</button>
+          </form>
+      </td>
+  </tr>
+</table>
+
+
+<div class="cart-container" *ngIf="opencartlist">
+  <h2>Your Cart</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Cycle</th>
+        <th>Quantity</th>
+        <th>Number of Days</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Use *ngFor to loop through cycles in the cart -->
+      <tr *ngFor="let item of rentedCycles">
+        <td>{{ item.cycle.brand }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.days }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

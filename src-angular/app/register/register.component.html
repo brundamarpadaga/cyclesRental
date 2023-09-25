@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+<div>
+    <h2>Sign Up</h2>
+    <p>Please enter your personal data!</p>
+    <form (submit)="onSubmit()">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" [(ngModel)]="username" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" [(ngModel)]="password" required>
+        </div>
+        <div>
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" [(ngModel)]="confirmPassword" required>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+</div>
