@@ -36,7 +36,9 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+
 import com.talentsprint.cycleshop.service.CustomUserDetailsService;
+import com.talentsprint.cycleshop.service.RegistrationForm;
 
 @Configuration
 @EnableWebSecurity
@@ -55,6 +57,11 @@ public class BasicConfiguration {
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception{
         auth.userDetailsService(userDetailsService);
     }
+    
+    
+    
+    @Autowired
+    private CorsConfig corsConfig;
 
     @Bean
     public UserDetailsService userDetailsService() {
@@ -67,6 +74,7 @@ public class BasicConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
             .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfig))
             .authorizeHttpRequests((requests) -> requests
             .requestMatchers("/api/register", "/api/auth/token").permitAll()
             .anyRequest().authenticated())
@@ -101,6 +109,11 @@ public class BasicConfiguration {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
+    }
+    
+    @Bean
+    public RegistrationForm registrationForm () {
+    	return new RegistrationForm();
     }
     
 }

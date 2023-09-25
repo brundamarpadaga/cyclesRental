@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +30,7 @@ import com.talentsprint.cycleshop.service.CycleService;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin
 public class CycleRestController {
     
     @Autowired
@@ -60,9 +62,15 @@ public class CycleRestController {
     public String addToCart(@PathVariable int id, @RequestParam int count){
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String username = authentication.getName();
-		System.out.println(username);
 		return cartService.addToCart(id, count, username);
     }
+    
+    @PostMapping("/cycle/{id}/restock")
+    public String restock(@PathVariable int id, @RequestParam int count) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return cartService.restock(id, count);
+    }
+    
     @PostMapping("/cycle/{id}/removefromcart")
     public String removeFromCart(@PathVariable int id) {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
