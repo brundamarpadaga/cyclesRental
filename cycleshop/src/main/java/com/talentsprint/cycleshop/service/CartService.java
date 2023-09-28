@@ -183,14 +183,4 @@ public class CartService {
 		}
 		
 	}
-
-	public String restock(int id, int count) {
-		
-		var cycle = cycleRepository.findById((long) id);
-		cycle.get().setStock(cycle.get().getStock()+count);
-		cycleRepository.save(cycle.get());
-		return "Cycle restocked";
-	}
-	
-
 }

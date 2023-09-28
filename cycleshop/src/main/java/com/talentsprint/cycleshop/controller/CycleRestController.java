@@ -52,9 +52,7 @@ public class CycleRestController {
     }
 
     @GetMapping("/cycle/list")
-    public List<Cycle> all(Authentication authentication) {
-        Jwt jwt = (Jwt) authentication.getPrincipal();
-        System.out.println(jwt.getClaimAsString("scope"));
+    public List<Cycle> all() {
         return cycleService.listAvailableCycles();
     }
     
@@ -68,7 +66,7 @@ public class CycleRestController {
     @PostMapping("/cycle/{id}/restock")
     public String restock(@PathVariable int id, @RequestParam int count) {
     	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		return cartService.restock(id, count);
+		return cycleService.restockBy(id, count);
     }
     
     @PostMapping("/cycle/{id}/removefromcart")
@@ -98,11 +96,6 @@ public class CycleRestController {
 	    cartService.checkout(username);
 	    }
     
-    @GetMapping("/registration")
-    public String registrationForm(Model model) {
-        return "userRegistration";
-    }
-    
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
 
@@ -119,27 +112,7 @@ public class CycleRestController {
         }
 
     }
-
- 
     
-   
-
-    @GetMapping("/login")
-    public String LoginForm(Model model) {
-        return "login";
-    }
-
-    @PostMapping("/login")
-    public String LoginonSubmit(@RequestParam String username, @RequestParam String password, Model model) {
-
-        Optional<User> user = userRepository.findByName(username);
-        if (user != null && userMatchesPassword(user.get(), password)) {
-            return "redirect:/restock";
-        } else {
-            model.addAttribute("error", "Invalid Crudentials");
-            return "login";
-        }
-    }
     private boolean userMatchesPassword(User user, String password) {
         return user.getPassword().equals(password);
     }

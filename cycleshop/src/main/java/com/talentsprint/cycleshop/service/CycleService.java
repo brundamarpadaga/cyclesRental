@@ -60,10 +60,13 @@ public class CycleService {
         returnCycle(id, 1);
     }
 
-    public void restockBy(long id, int count) {
+    public String restockBy(long id, int count) {
         var cycle = findByIdOrThrow404(id);
         cycle.setStock(cycle.getStock() + count);
         cycleRepository.save(cycle);
+        return "Cycle restocked";
     }
+    
+
 
 }

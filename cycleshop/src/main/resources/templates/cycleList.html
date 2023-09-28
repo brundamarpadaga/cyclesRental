@@ -30,3 +30,9 @@
         </tr>
     </table>
 </body>-->
+
+@PostMapping("/cycle/{id}/restock")
+    public String restock(@PathVariable int id, @RequestParam int count) {
+    	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return cycleService.restockBy(id, count);
+    }

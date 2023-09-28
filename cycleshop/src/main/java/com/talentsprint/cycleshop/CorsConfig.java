@@ -1,12 +1,13 @@
 package com.talentsprint.cycleshop;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import io.micrometer.common.lang.Nullable;
 import jakarta.servlet.http.HttpServletRequest;
-
+@CrossOrigin
 @Configuration
 public class CorsConfig implements CorsConfigurationSource {
 
