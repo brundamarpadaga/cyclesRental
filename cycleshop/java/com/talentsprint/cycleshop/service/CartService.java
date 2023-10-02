@@ -2,6 +2,7 @@ package com.talentsprint.cycleshop.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,11 +40,12 @@ public class CartService {
 		
 		
 		
+		
 	    Optional<User> user = userRepository.findByName(username);
 
 	    if (user != null) {
 	    	
-	        Cart cart = cartRepository.findByUserAndInBagIsFalse(user.get());
+	        Cart cart = cartRepository.findCartByUserAndNotInBag(user.get());
 	        if(cart == null) {
 	        	cart = new Cart();
 	        	cart.setUser(user.get());
@@ -66,8 +68,10 @@ public class CartService {
 		            CartItem cartItem = new CartItem();
 		            cartItem.setCycle(cycle.get());
 		            cartItem.setQuantity(quantity);
+		            cartItem.setDays(1);
 		            //cartItem.setCart(cart);
 		            cart.getCartItems().add(cartItem);
+		            
                 }
 	            cartRepository.save(cart);
 	        }
@@ -183,37 +187,82 @@ public class CartService {
 	}
 
 	
-	public void returnCycle(String username,int cartId,long cycleId) {
-		User user = userRepository.findByName(username).orElseGet(null);
-		//Cycle cycle = cycleRepository.findById(cycleId).get();
-		
-		if(user != null ) {
-			Cart cart = cartRepository.findById(cartId).get();
-			if(cart!=null) {
-				List<CartItem> cartItems = cart.getCartItems();
-				cartItems = cartItems.stream().peek(item -> {
-					if(item.getCycle().getId()==cycleId) {
-						if(item.getQuantity()>0)
-						{
-							item.setQuantity(item.getQuantity()-1);
-							Cycle cycle = cycleRepository.findById(cycleId).get();
-							cycle.setNumBorrowed(cycle.getNumBorrowed()-1);
-							cycle.setStock(cycle.getStock()+1);
-							cycleRepository.save(cycle);
-						}
-					}
-				}).collect(Collectors.toList());
-				for(CartItem item : cartItems)
-					if(item.getQuantity() == 0)
-					{
-						cartItems.remove(item);
-						cartItemRepository.delete(cartItemRepository.getByCycleId(cycleId));
-						
-					}
-				cart.setCartItems(cartItems);	
-			}
-			cartRepository.save(cart);
-		}
-		
+//	public void returnCycle(String username,int cartId,long cycleId) {
+//		User user = userRepository.findByName(username).orElseGet(null);
+//		//Cycle cycle = cycleRepository.findById(cycleId).get();
+//		
+//		if(user != null ) {
+//			Cart cart = cartRepository.findById(cartId).get();
+//		
+//			if(cart!=null ) {
+//				List<CartItem> cartItems = cart.getCartItems();
+//				cartItems = cartItems.stream().peek(item -> {
+//					if(item.getCycle().getId()==cycleId) {
+//						if(item.getQuantity()>0)
+//						{
+//							item.setQuantity(item.getQuantity()-1);
+//							Cycle cycle = cycleRepository.findById(cycleId).get();
+//							cycle.setNumBorrowed(cycle.getNumBorrowed()-1);
+//							cycle.setStock(cycle.getStock()+1);
+//							cycleRepository.save(cycle);
+//						}
+//					}
+//				}).collect(Collectors.toList());
+//				for(CartItem item : cartItems)
+//				{
+//					if(item.getQuantity() == 0)
+//					{
+//						cartItems.remove(item);
+//					}
+//				}
+//				cart.setCartItems(cartItems);	
+//			}
+//			cartRepository.save(cart);
+//		}
+//		
+//	}
+	
+	public void returnCycle(String username, int cartId, long cycleId) {
+	    User user = userRepository.findByName(username).orElse(null);
+
+	    if (user != null) {
+	        Cart cart = cartRepository.findById(cartId).orElse(null);
+
+	        if (cart != null) {
+	            List<CartItem> cartItems = cart.getCartItems();
+
+	            // Use an Iterator to safely remove items from the list
+	            Iterator<CartItem> iterator = cartItems.iterator();
+	            while (iterator.hasNext()) {
+	                CartItem item = iterator.next();
+
+	                if (item.getCycle().getId() == cycleId) {
+	                    if (item.getQuantity() > 0) {
+	                        item.setQuantity(item.getQuantity() - 1);
+	                        
+	                        // Modify cycle parameters here
+	                        Cycle cycle = cycleRepository.findById(cycleId).orElse(null);
+	                        if (cycle != null) {
+	                            cycle.setNumBorrowed(cycle.getNumBorrowed() - 1);
+	                            cycle.setStock(cycle.getStock() + 1);
+	                            cycleRepository.save(cycle);
+	                        }
+
+	                        // If quantity becomes 0, remove the item from the cart
+	                        if (item.getQuantity() == 0) {
+	                            iterator.remove();
+	                        }
+	                    }
+	                }
+	            }
+
+	            // Update the cart's cartItems
+	            cart.setCartItems(cartItems);
+	            cartRepository.save(cart);
+	        }
+	    }
 	}
+
+	
+	
 }
